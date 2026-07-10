@@ -60,7 +60,7 @@ public class AnimalMove : ComponentBase
         float moveX = m_face * Time.deltaTime * walkSpeed;
         float extentX = VarHelper.GetFloat(m_entity.GetProp(PropId.BodyRadius), 0.5f);
         m_x += moveX;
-        if (m_x + extentX >= ScreenHelper.Right || m_x - extentX <= ScreenHelper.Left)
+        if (m_x + extentX >= ScreenHelper.Right && m_face == 1 || m_x - extentX <= ScreenHelper.Left && m_face == -1)
         {
             FlipX();
         }

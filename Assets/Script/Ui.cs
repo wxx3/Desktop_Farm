@@ -34,7 +34,6 @@ public class Ui
     {
         float x = VarHelper.GetFloat(m_Entity.GetProp(PropId.PosX));
         float y = VarHelper.GetFloat(m_Entity.GetProp(PropId.PosY));
-        //Debug.Log($"调用逻辑层数据{x}, {y}");
         UpdatePos(x, y);//传入x,y坐标
 
     }

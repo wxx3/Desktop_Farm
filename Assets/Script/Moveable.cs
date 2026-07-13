@@ -11,7 +11,7 @@ public enum State
     Sleeping,
     Falling
 }
-public class AnimalMove : ComponentBase
+public class Moveable : ComponentBase
 {
     private State m_state;
     private int m_face = 1;

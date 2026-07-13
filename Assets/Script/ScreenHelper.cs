@@ -38,4 +38,13 @@ public class ScreenHelper
             return MainCamera.ViewportToWorldPoint(new Vector2(1, 0)).x;
         }
     }
+
+    public static Vector2 GetMouseWorldPos()
+    {
+        Vector3 screenPos = Input.mousePosition;
+
+        screenPos.z = Mathf.Abs(MainCamera.transform.position.z);
+
+        return MainCamera.ScreenToWorldPoint(screenPos);
+    }
 }

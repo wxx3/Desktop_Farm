@@ -9,8 +9,13 @@ public class EntityBase : IEntity
     public Dictionary<PropId, VarValue> m_Props = new Dictionary<PropId, VarValue>();
     protected List<ComponentBase> m_ActiveCom = new List<ComponentBase>();
     public event Action<PropId, VarValue> OnPropChanged;//属性改动广播
-    public event Action<EntityBase, String, object> OnEntityEvent;
-
+    public event Action<EntityBase, String, object> OnEntityEvent;//在实体上触发事件广播
+    static int m_Sid = 1;
+    public static int sid
+    {
+        get { return m_Sid++; }
+    }
+    public int InstanceId;
     public virtual VarValue GetProp(PropId propId)
     {
         bool has = m_Props.TryGetValue(propId, out VarValue result);
@@ -52,6 +57,22 @@ public class EntityBase : IEntity
 
     public virtual void OnDestroy()
     {
+        if (m_ActiveCom != null)
+        {
+            for (int i = 0; i < m_ActiveCom.Count; i++)
+            {
+                m_ActiveCom[i].OnDestroy();
+            }
+            m_ActiveCom.Clear();
+        }
+
+        if (m_Props != null)
+        {
+            m_Props.Clear();
+        }
+
+        OnPropChanged    = null;
+        OnEntityEvent = null;
     }
     
 }

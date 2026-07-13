@@ -44,6 +44,10 @@ public class GameLuncher : MonoBehaviour
         m_SysList.Add(uiSys);
         m_Type2Sys.Add(typeof(UiSys), uiSys);
 
+        ProductSys productSys = new ProductSys();
+        m_SysList.Add(productSys);
+        m_Type2Sys.Add(typeof(ProductSys), productSys);
+
         for (int i = 0; i < m_SysList.Count; i++)
         {
             m_SysList[i].Init(this);

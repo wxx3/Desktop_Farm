@@ -24,19 +24,13 @@ public enum PropId
 
 public class Animal: EntityBase
 {
-    static int m_Sid = 1;
-    public static int sid
-    {
-        get { return m_Sid++; }
-    }
-    public int InstanceId;
-    //private GameObject m_gameObject;
+    
     protected SpriteRenderer m_spriteRenderer;
     public override void OnCreate()
     {
         InstanceId = Animal.sid;
 
-        AnimalMove move = new AnimalMove();
+        Moveable move = new Moveable();
         AddComponent(move);
     }
     

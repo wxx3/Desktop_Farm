@@ -14,7 +14,7 @@ public class ComponentBase : ICompenent
     }
     public virtual void OnDestroy()
     {
-
+        m_entity = null;
     }
 
     

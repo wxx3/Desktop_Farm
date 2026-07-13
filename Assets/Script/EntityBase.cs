@@ -41,7 +41,7 @@ public class EntityBase : IEntity
     }
     public virtual void OnUpdate()
     {
-        for (int i = 0; i < m_ActiveCom.Count; i++)
+        for (int i = m_ActiveCom.Count - 1; i >= 0 ; i--)
         {
             m_ActiveCom[i].OnUpdate();
         }

@@ -14,9 +14,10 @@ public class Collectable : ComponentBase
 
     public override void OnUpdate()
     {
-        Collect();
+        OnCollect();
     }
-    private void Collect()
+    
+    private void OnCollect()
     {
         Vector2 pos = ScreenHelper.GetMouseWorldPos();
         float posx = VarHelper.GetFloat(m_entity.GetProp(PropId.PosX));

@@ -50,8 +50,8 @@ public class UiSys : SystemBase
             return;
         }
         Ui ui = m_Sid2Ui[s_id];
-        ui.OnDestroy();
         m_ActiveUi.Remove(ui);
         m_Sid2Ui.Remove(s_id);
+        ui.OnDestroy();
     }
 }

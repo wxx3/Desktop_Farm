@@ -54,8 +54,12 @@ public class Ui
     {
         if (m_Entity != null)
         {
-            m_Entity.OnPropChanged -= HandlePropsChange;
+            m_Entity = null; // 断开对逻辑层的引用
+        }
+        if (m_GameObject != null)
+        {
             UnityEngine.Object.Destroy(m_GameObject);
+            m_GameObject = null; // 断开对表现层的引用
         }
 
     }

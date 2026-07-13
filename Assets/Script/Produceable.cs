@@ -26,7 +26,7 @@ public class Produceable : ComponentBase
             //todo:生产
             if(m_Name == "chicken")
             {
-                Debug.LogError("生蛋！");
+                Debug.LogFormat("生蛋！");
                 m_entity.TriggerEvent("SpawnEgg");
 
             }

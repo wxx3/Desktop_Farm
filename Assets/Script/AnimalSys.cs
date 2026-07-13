@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class AnimalSys : SystemBase
 {
+
+    //实现动物的创建，销毁，更新和获取，还有动物的事件处理
     Dictionary<int, Animal> m_Sid2Animal = new Dictionary<int, Animal>();
     List<Animal> m_ActiveAnimal = new List<Animal>();
+    ResourceSys m_Resources;
+    UiSys uiSys;
     public override void Update()
     {
         for (int i = 0; i <= m_ActiveAnimal.Count - 1; i++)
@@ -17,28 +22,25 @@ public class AnimalSys : SystemBase
     }
     public void CreatAnimal(string name)
     {
-        ResourceSys resourceSys = luncher.GetSystem<ResourceSys>();
-        UiSys uiSys = luncher.GetSystem<UiSys>();
+        m_Resources = luncher.GetSystem<ResourceSys>();
+        uiSys = luncher.GetSystem<UiSys>();
 
-        //animalPrefab = UnityEngine.Object.Instantiate(animalPrefab);
         Animal animal = null;
-        if(name == "chicken")
+        if(name == "chicken")//可以改成switch
         {
             animal = new Chicken();
-            animal.OnCreate();
-            //Debug.LogError("创建ui");
-            uiSys.CreateUi(animal);//ui绑定逻辑
-            m_Sid2Animal.Add(animal.InstanceId, animal);
-            m_ActiveAnimal.Add(animal);
         }
         if(animal != null)
         {
+            animal.OnCreate();
+            uiSys.CreateUi(animal);//ui绑定逻辑
+            m_Sid2Animal.Add(animal.InstanceId, animal);
+            m_ActiveAnimal.Add(animal);
             animal.OnEntityEvent += HandleEntityEvent;
         }
     }
-    //todo:生蛋逻辑
     private void HandleEntityEvent(EntityBase entity, string eventName, object data)
-    {
+    {//处理动物事件
         switch (eventName)
         {
             case "SpawnEgg":
@@ -46,13 +48,13 @@ public class AnimalSys : SystemBase
                 break;
         }
     }
+    
     private void SpawnEgg(EntityBase entity)
     {
-        UiSys uiSys = luncher.GetSystem<UiSys>();
-        Egg egg = new Egg();
-        egg.m_Props.Add(PropId.PosX, entity.m_Props[PropId.PosX]);
-        egg.m_Props.Add(PropId.PosY, entity.m_Props[PropId.PosY]);
-        uiSys.CreateUi(egg);
+        float posX = VarHelper.GetFloat(entity.m_Props[PropId.PosX]);
+        float posY = VarHelper.GetFloat(entity.m_Props[PropId.PosY]);
+        ProductSys productSys = luncher.GetSystem<ProductSys>();
+        productSys.CreateProduct("egg", posX, posY);
     }
     public void KillAnimalBySid(int sid)
     {

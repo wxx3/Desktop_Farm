@@ -50,12 +50,14 @@ public class Ui
                 break;
         }
     }
-    void OnDestroy()
+    public void OnDestroy()
     {
         if (m_Entity != null)
         {
             m_Entity.OnPropChanged -= HandlePropsChange;
+            UnityEngine.Object.Destroy(m_GameObject);
         }
+
     }
     public void UpdatePos(float pos_x, float pos_y)
     {

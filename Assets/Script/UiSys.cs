@@ -42,4 +42,16 @@ public class UiSys : SystemBase
             m_ActiveUi[i].OnUpdate();
         }
     }
+    public void DestroyUi(int s_id)
+    {
+        if (!m_Sid2Ui.ContainsKey(s_id))
+        {
+            Debug.LogError($"不存在sid为{s_id}的ui");
+            return;
+        }
+        Ui ui = m_Sid2Ui[s_id];
+        ui.OnDestroy();
+        m_ActiveUi.Remove(ui);
+        m_Sid2Ui.Remove(s_id);
+    }
 }

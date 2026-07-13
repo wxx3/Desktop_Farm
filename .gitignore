@@ -4,14 +4,14 @@
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
-/[Build]/
-/[Builds]/
-/[Logs]/
-/[UserSettings]/
-/[MemoryCaptures]/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]serSettings/
+/[Mm]emoryCaptures/
 
 # =========================================================================
-# 【新增】IDE（编译器）本地临时与缓存文件夹（极其重要，防止 Permission denied 报错）
+# IDE（编译器）本地临时与缓存文件夹
 # =========================================================================
 .vs/
 .idea/
@@ -37,4 +37,3 @@ Crash_Data_Report/
 sysinfo.txt
 .DS_Store
 Thumbs.db
-Logs/

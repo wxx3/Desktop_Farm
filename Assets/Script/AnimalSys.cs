@@ -54,6 +54,7 @@ public class AnimalSys : SystemBase
         float posX = VarHelper.GetFloat(entity.m_Props[PropId.PosX]);
         float posY = VarHelper.GetFloat(entity.m_Props[PropId.PosY]);
         ProductSys productSys = luncher.GetSystem<ProductSys>();
+        Debug.LogFormat("SpawnEgg: posX={0}, posY={1}", posX, posY);
         productSys.CreateProduct("egg", posX, posY);
     }
     public void KillAnimalBySid(int sid)

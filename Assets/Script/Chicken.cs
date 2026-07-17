@@ -20,8 +20,11 @@ public class Chicken : Animal
         m_Props.Add(PropId.PosX, VarHelper.PackValue(0f));
         m_Props.Add(PropId.PosY, VarHelper.PackValue(-2f));
         //下蛋时间
-        m_Props.Add(PropId.MaxProduceSpeed, VarHelper.PackValue(600f));
-        m_Props.Add(PropId.MinProduceSpeed, VarHelper.PackValue(1800f));
+        //m_Props.Add(PropId.MaxProduceSpeed, VarHelper.PackValue(600f));
+        //m_Props.Add(PropId.MinProduceSpeed, VarHelper.PackValue(1800f));
+        //演示
+        m_Props.Add(PropId.MaxProduceSpeed, VarHelper.PackValue(1f));
+        m_Props.Add(PropId.MinProduceSpeed, VarHelper.PackValue(5f));
 
     }
 

@@ -16,6 +16,7 @@
 .vs/
 .idea/
 .vscode/
+/out/
 
 # 排除自动生成的工程文件
 *.csproj

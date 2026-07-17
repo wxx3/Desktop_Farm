@@ -5,23 +5,6 @@ using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 
 
-public enum PropId
-{
-    Gravity = 1,
-    FallSpeed = 2,
-    WalkSpeed = 3,
-    FlySpeed = 4,
-    Name = 5,
-    MinProduceSpeed = 6,
-    MaxProduceSpeed = 7,
-    FaceDir = 8,
-    State = 9,
-    PosX = 10,
-    PosY = 11,
-    Face = 12,
-    BodyRadius = 13
-}
-
 public class Animal: EntityBase
 {
     

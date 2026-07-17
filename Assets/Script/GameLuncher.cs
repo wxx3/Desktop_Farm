@@ -24,11 +24,11 @@ public class GameLuncher : MonoBehaviour
 
     void Awake()
     {
-        AnimalSys animalSys = new AnimalSys();
+        AnimalSys animalSys = new AnimalSys();//管理动物的系统
         m_SysList.Add(animalSys);
         m_Type2Sys.Add(typeof(AnimalSys), animalSys);
 
-        ShoppingSys shoppingSys = new ShoppingSys();
+        ShoppingSys shoppingSys = new ShoppingSys();//管理商店的系统（购买动物，购买食物）
         m_SysList.Add(shoppingSys);
         m_Type2Sys.Add(typeof(ShoppingSys), shoppingSys);
 

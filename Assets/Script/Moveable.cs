@@ -9,7 +9,8 @@ public enum State
     Idle,
     Walking,
     Sleeping,
-    Falling
+    Falling,
+    Floating
 }
 public class Moveable : ComponentBase
 {
@@ -25,6 +26,7 @@ public class Moveable : ComponentBase
         m_state = State.Falling;
         m_x = VarHelper.GetFloat(m_entity.GetProp(PropId.PosX));
         m_y = VarHelper.GetFloat(m_entity.GetProp(PropId.PosY));
+        entity.OnPropChanged += 
     }
     public override void OnUpdate()
     {
@@ -46,6 +48,9 @@ public class Moveable : ComponentBase
                 Idle();
                 Keep();
                 break;
+            case State.Floating:
+                Float();
+                break;
         }
         //Debug.Log($"调用{m_x}, {m_y}，{ScreenHelper.Bottom}");
 
@@ -64,6 +69,12 @@ public class Moveable : ComponentBase
         {
             FlipX();
         }
+    }
+    protected void Float()
+    {
+
+        //被鼠标拖拽，悬浮在空中
+
     }
     protected void Idle()
     {
@@ -125,6 +136,14 @@ public class Moveable : ComponentBase
     {
         m_face = -m_face;
         //m_spriteRenderer.flipX = (m_face == -1);
+    }
+
+    private void HandlePropsChange(PropId propId, VarValue value)
+    {
+        if (PropId.State == propId)
+        {
+            m_state = (State)VarHelper.GetInt(m_entity.GetProp(PropId.State));
+        }
     }
 
     //protected void UpdateAnimator()

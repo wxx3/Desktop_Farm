@@ -10,7 +10,7 @@ public class ShoppingSys : SystemBase
     {
         base.Init(luncher);
         UiSys uiSys = luncher.GetSystem<UiSys>();
-        uiSys.ShowPrice(m_Coin);
+        uiSys.ShowCoin(m_Coin);
     }
 
     public void AddCoin(int coin)
@@ -18,7 +18,7 @@ public class ShoppingSys : SystemBase
         m_Coin += coin;
         Debug.Log($"AddCoin: {coin}, total: {m_Coin}");
         UiSys uiSys = luncher.GetSystem<UiSys>();
-        uiSys.ShowPrice(m_Coin);
+        uiSys.ShowCoin(m_Coin);
     }
     public void RemoveCoin(int coin)
     {
@@ -41,6 +41,6 @@ public class ShoppingSys : SystemBase
             Debug.LogError("Coins not enough!");
         }
         UiSys uiSys = luncher.GetSystem<UiSys>();
-        uiSys.ShowPrice(m_Coin);
+        uiSys.ShowCoin(m_Coin);
     }
 }

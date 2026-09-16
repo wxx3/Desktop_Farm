@@ -47,6 +47,14 @@ public class AnimalSys : SystemBase
         }
         return 0;
     }
+    public int GetAnimalSellPrice(string name)
+    {
+        if (name == "chicken")
+        {
+            return 20;
+        }
+        return 0;
+    }
     private void HandleEntityEvent(EntityBase entity, string eventName, object data)
     {//处理动物事件
         switch (eventName)

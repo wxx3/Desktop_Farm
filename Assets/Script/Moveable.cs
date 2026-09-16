@@ -26,7 +26,7 @@ public class Moveable : ComponentBase
         m_state = State.Falling;
         m_x = VarHelper.GetFloat(m_entity.GetProp(PropId.PosX));
         m_y = VarHelper.GetFloat(m_entity.GetProp(PropId.PosY));
-        entity.OnPropChanged += 
+        //entity.OnPropChanged += 
     }
     public override void OnUpdate()
     {

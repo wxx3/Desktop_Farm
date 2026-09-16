@@ -5,13 +5,17 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using static UnityEngine.EventSystems.EventTrigger;
 using TMPro;
+using System.Runtime.CompilerServices;
 
 public class UiSys : SystemBase
 {
 
     Dictionary<int, Ui> m_Sid2Ui = new Dictionary<int, Ui>();
     List<Ui> m_ActiveUi = new List<Ui>();
-    
+    Vector2 m_MousePosition;
+    private GameObject m_PriceBroad;
+    private TextMeshPro m_priceText;
+
     public void StartCreateUi()
     {
         GameObject Canvas;
@@ -21,7 +25,7 @@ public class UiSys : SystemBase
             Debug.LogError("找不到Canvas");
             return;
         }
-        UnityEngine.UI.Button addButtion = Canvas.transform.Find("Add").GetComponent<UnityEngine.UI.Button>();
+        UnityEngine.UI.Button addButtion = Canvas.transform.Find("ChickenHead").GetComponent<UnityEngine.UI.Button>();
         if (addButtion == null)
         {
             Debug.LogError("找不到Add按钮");
@@ -31,6 +35,7 @@ public class UiSys : SystemBase
         addButtion.onClick.AddListener(OnAddButtonClick);
         RectTransform addRect = addButtion.GetComponent<RectTransform>();
         Debug.Log($"Add runtime state: interactable={addButtion.interactable}, active={addButtion.gameObject.activeInHierarchy}, rect={addRect.rect}, corners={string.Join(" | ", GetWorldCorners(addRect))}");
+        m_MousePosition = ScreenHelper.GetMouseWorldPos();
     }
     public void OnAddButtonClick()
     {
@@ -66,16 +71,42 @@ public class UiSys : SystemBase
     //todo:和animal逻辑绑定，不同的动物调用不同的预制体，对表现层进行操作
     public override void Update()
     {
-        if (Time.frameCount % 120 == 0)
-        {
-            Debug.Log($"UI heartbeat: frame={Time.frameCount}, focused={Application.isFocused}, mouse={Input.mousePosition}");
-        }
+        //if (Time.frameCount % 120 == 0)
+        //{
+        //    Debug.Log($"UI heartbeat: frame={Time.frameCount}, focused={Application.isFocused}, mouse={Input.mousePosition}");
+        //}
         if (Input.GetMouseButtonDown(0))
         {
             LogPointerDiagnostics();
         }
-        for(int i = 0; i < m_ActiveUi.Count; i++) {//对于所有的ui进行更新
+        m_MousePosition = ScreenHelper.GetMouseWorldPos();
+        Ui currentUi = null;
+        for (int i = 0; i < m_ActiveUi.Count; i++)
+        {//对于所有的ui进行更新
             m_ActiveUi[i].OnUpdate();
+            Ui ui = m_ActiveUi[i];
+            if (ui.IsPointInCollider(m_MousePosition))
+            {
+                //Debug.Log($"Mouse is over UI: sid={ui.InstanceId}, name={VarHelper.GetString(ui.m_Entity.GetProp(PropId.Name))}");
+                currentUi = ui;
+                break;
+            }
+        }
+        if (currentUi != null)
+        {
+            //todo:鼠标悬停在ui上，显示动物价格
+            string name = VarHelper.GetString(currentUi.m_Entity.GetProp(PropId.Name));
+            if (name != null)
+            {
+                int price = GetAnimalSellPrice(name);
+                ShowAnimalPrice(currentUi, (int)price);
+            }
+
+            //SellAnimals(currentUi);
+        }
+        else
+        {
+            HideAnimalPrice();
         }
     }
     private void LogPointerDiagnostics()
@@ -110,6 +141,21 @@ public class UiSys : SystemBase
         }
         return values;
     }
+    //private void SellAnimals(Ui ui)
+    //{
+    //    if (Input.GetMouseButtonDown(0))
+    //    {
+    //        string name = VarHelper.GetString(ui.m_Entity.GetProp(PropId.Name));
+    //        if (name != null)
+    //        {
+    //            int price = GetAnimalSellPrice(name);
+    //            ShoppingSys shoppingSys = luncher.GetSystem<ShoppingSys>();
+    //            shoppingSys.AddCoin(price);
+    //            AnimalSys animalSys = luncher.GetSystem<AnimalSys>();
+    //            animalSys.KillAnimalBySid(ui.InstanceId);
+    //        }
+    //    }
+    //}
 
     public void DestroyUi(int s_id)
     {
@@ -124,7 +170,7 @@ public class UiSys : SystemBase
         ui.OnDestroy();
     }
 
-    public void ShowPrice(int price)
+    public void ShowCoin(int price)
     {
         GameObject Canvas = GameObject.Find("Canvas");
         TextMeshProUGUI coinText = Canvas.transform.Find("Coin").GetComponent<TextMeshProUGUI>();
@@ -136,5 +182,44 @@ public class UiSys : SystemBase
         {
             Debug.LogError("找不到Coin文本");
         }
+    }
+
+    public void ShowAnimalPrice(Ui ui, int price)
+    {
+        if(m_PriceBroad == null)
+        {
+            GameObject pricePrefab = Resources.Load<GameObject>("Animal/PriceBroad");
+            if (pricePrefab == null)
+            {
+                Debug.LogError("找不到 Animal/PriceBroad.prefab");
+                return;
+            }
+            m_PriceBroad = Object.Instantiate(pricePrefab);
+            m_priceText = pricePrefab.transform.Find("PriceText").GetComponent<TextMeshPro>();
+        }
+        if (m_priceText != null)
+        {
+            m_priceText.text = $"{price}$";
+        }
+        else
+        {
+            Debug.LogError("找不到Price文本");
+        }
+        m_PriceBroad.transform.position = ui.m_Renderer.transform.position + new Vector3(0, 0.5f, 0);
+        m_PriceBroad.SetActive(true);
+    }
+    public void HideAnimalPrice()
+    {
+        if (m_PriceBroad != null)
+        {
+            m_PriceBroad.SetActive(false);
+        }
+
+        //m_PriceUi = null;
+    }
+    private int GetAnimalSellPrice(string name)
+    {
+        AnimalSys animalSys = luncher.GetSystem<AnimalSys>();
+        return animalSys.GetAnimalSellPrice(name);
     }
 }

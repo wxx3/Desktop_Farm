@@ -17,6 +17,7 @@ public class Ui
     public SpriteRenderer m_Renderer;
     public Animator m_Animator;
     private GameObject m_GameObject;
+    private Collider2D m_Collider2D;
     public void OnCreate(EntityBase entity, GameObject prefab)
     {
         InstanceId = sid;
@@ -28,6 +29,8 @@ public class Ui
 
         entity.OnPropChanged += HandlePropsChange;
         m_Renderer = prefab.GetComponent<SpriteRenderer>();
+
+        m_Collider2D = prefab.GetComponent<Collider2D>();
     }
 
     public void OnUpdate()
@@ -66,5 +69,14 @@ public class Ui
     public void UpdatePos(float pos_x, float pos_y)
     {
         m_GameObject.transform.position = new Vector2(pos_x, pos_y);
+    }
+
+    public bool IsPointInCollider(Vector2 point)
+    {
+        if (m_Collider2D != null)
+        {
+            return m_Collider2D.OverlapPoint(point);
+        }
+        return false;
     }
 }

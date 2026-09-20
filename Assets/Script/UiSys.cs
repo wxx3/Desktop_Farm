@@ -28,23 +28,34 @@ public class UiSys : SystemBase
             Debug.LogError("找不到Canvas");
             return;
         }
-        UnityEngine.UI.Button addButtion = Canvas.transform.Find("ChickenHead").GetComponent<UnityEngine.UI.Button>();
-        if (addButtion == null)
+        UnityEngine.UI.Button addChickenButton =
+        Canvas.transform.Find("ChickenHead").GetComponent<Button>();
+        if (addChickenButton == null)
         {
-            Debug.LogError("找不到Add按钮");
+            Debug.LogError("找不到AddChicken按钮");
             return;
         }
-        Debug.Log("找到Add按钮");
-        addButtion.onClick.AddListener(OnAddButtonClick);
-        RectTransform addRect = addButtion.GetComponent<RectTransform>();
-        Debug.Log($"Add runtime state: interactable={addButtion.interactable}, active={addButtion.gameObject.activeInHierarchy}, rect={addRect.rect}, corners={string.Join(" | ", GetWorldCorners(addRect))}");
+        Debug.Log("找到AddChicken按钮");
+        UnityEngine.UI.Button addDuckButton = 
+            Canvas.transform.Find("DuckHead").GetComponent<Button>();
+        if (addDuckButton == null)
+        {
+            Debug.LogError("找不到AddDuck按钮");
+            return;
+        }
+        Debug.Log("找到AddDuck按钮");
+
+        addChickenButton.onClick.AddListener(() => OnAddButtonClick("chicken"));
+        addDuckButton.onClick.AddListener(() => OnAddButtonClick("duck"));
+        RectTransform addRect = addChickenButton.GetComponent<RectTransform>();
+        Debug.Log($"Add runtime state: interactable={addChickenButton.interactable}, active={addChickenButton.gameObject.activeInHierarchy}, rect={addRect.rect}, corners={string.Join(" | ", GetWorldCorners(addRect))}");
         m_MousePosition = ScreenHelper.GetMouseWorldPos();
     }
-    public void OnAddButtonClick()
+    public void OnAddButtonClick(string name)
     {
         Debug.Log("Add按钮被点击");
         ShoppingSys shoppingSys = luncher.GetSystem<ShoppingSys>();
-        shoppingSys.BuyAnimal("chicken");
+        shoppingSys.BuyAnimal(name);
     }
     public void CreateUi(EntityBase entity)
     {
@@ -62,6 +73,11 @@ public class UiSys : SystemBase
         ui.OnCreate(entity, prefab);
         m_Sid2Ui.Add(ui.InstanceId, ui);
         m_ActiveUi.Add(ui);
+    }
+    public override void Destroy()
+    {
+        base.Destroy();
+        
     }
     public Ui GetUiByIndex(int index)
     {

@@ -18,4 +18,7 @@ public class SystemBase : ISystem
     {
 
     }
+    public virtual void Destroy()
+    {
+    }
 }

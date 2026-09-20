@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ShoppingSys : SystemBase
 {
-    public int m_Coin = 0;
+    public int m_Coin = 10100;
     private UiSys m_uiSys;
 
     public override void Init(GameLuncher luncher)

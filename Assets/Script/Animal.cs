@@ -9,17 +9,21 @@ public class Animal: EntityBase
 {
     
     protected SpriteRenderer m_spriteRenderer;
+    Moveable moveable;
     public override void OnCreate()
     {
         InstanceId = Animal.sid;
 
-        Moveable move = new Moveable();
-        AddComponent(move);
+        moveable = new Moveable();
+        AddComponent(moveable);
     }
-    
+    public void SetPaused(bool pause)
+    {
+        moveable.SetPaused(pause);
+    }
     public override void OnDestroy()
     {
-
+        RemoveComponent(moveable);
     }
 
     public override void InitPops()

@@ -67,6 +67,8 @@ public class GameLuncher : MonoBehaviour
         AnimalSys animalSys = GetSystem<AnimalSys>();
         animalSys.CreateAnimal("chicken");
         Debug.Log("创建小鸡！");
+        animalSys.CreateAnimal("duck");
+        Debug.Log("创建小鸭！");
 
         UiSys uiSys = GetSystem<UiSys>();
         uiSys.StartCreateUi();

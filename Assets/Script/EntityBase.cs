@@ -59,6 +59,11 @@ public class EntityBase : IEntity
         m_ActiveCom.Add(component);
         component.Bind(this);
     }
+    protected virtual void RemoveComponent(ComponentBase component)
+    {
+        m_ActiveCom.Remove(component);
+        component.Unbind();
+    }
     public virtual void OnUpdate()
     {
         for (int i = m_ActiveCom.Count - 1; i >= 0 ; i--)

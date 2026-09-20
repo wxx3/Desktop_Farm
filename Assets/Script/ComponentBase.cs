@@ -9,6 +9,10 @@ public class ComponentBase : ICompenent
     {
         m_entity = entity;
     }
+    public virtual void Unbind()
+    {
+        m_entity = null;
+    }
     public virtual void OnUpdate()
     {
     }

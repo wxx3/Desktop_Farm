@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum State
@@ -19,6 +20,7 @@ public class Moveable : ComponentBase
     private float m_x;
     private float m_y;
     private float m_time;
+    private bool m_isPaused = false;
     
     public override void Bind(EntityBase entity)
     {
@@ -30,8 +32,18 @@ public class Moveable : ComponentBase
     }
     public override void OnUpdate()
     {
+        if (m_isPaused)
+        {
+            m_entity.SetProp(PropId.State, VarHelper.PackValue((int)State.Idle));
+            //Debug.LogWarning("Paused, skipping update.");
+            return;
+        }
         Behavior();
-        
+    }
+
+    public void SetPaused(bool paused)
+    {
+        m_isPaused = paused;
     }
     protected void Behavior()
     {

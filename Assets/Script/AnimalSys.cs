@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
@@ -11,14 +12,25 @@ public class AnimalSys : SystemBase
     //实现动物的创建，销毁，更新和获取，还有动物的事件处理
     Dictionary<int, Animal> m_Sid2Animal = new Dictionary<int, Animal>();
     List<Animal> m_ActiveAnimal = new List<Animal>();
+    Dictionary<string, int> m_Name2Animal = new Dictionary<string, int>();
     ResourceSys m_Resources;
     UiSys uiSys;
+    public override void Init(GameLuncher gameLuncher)
+    {
+        base.Init(gameLuncher);
+        InitAnimalSellPrice();
+    }
     public override void Update()
     {
         for (int i = 0; i <= m_ActiveAnimal.Count - 1; i++)
         {
             m_ActiveAnimal[i].OnUpdate();
         }
+    }
+    public void InitAnimalSellPrice()
+    {
+        m_Name2Animal.Add("chicken", 20);
+        m_Name2Animal.Add("duck", 25);
     }
     public void CreateAnimal(string name)
     {
@@ -30,7 +42,11 @@ public class AnimalSys : SystemBase
         {
             animal = new Chicken();
         }
-        if(animal != null)
+        if(name == "duck")
+        {
+            animal = new Duck();
+        }
+        if (animal != null)
         {
             animal.OnCreate();
             uiSys.CreateUi(animal);//ui绑定逻辑
@@ -45,15 +61,15 @@ public class AnimalSys : SystemBase
         {
             return 50;
         }
+        if (name == "duck")
+        {
+            return 70;
+        }
         return 0;
     }
     public int GetAnimalSellPrice(string name)
     {
-        if (name == "chicken")
-        {
-            return 20;
-        }
-        return 0;
+        return m_Name2Animal.ContainsKey(name) ? m_Name2Animal[name] : 0;
     }
     private void HandleEntityEvent(EntityBase entity, string eventName, object data)
     {//处理动物事件
@@ -75,9 +91,18 @@ public class AnimalSys : SystemBase
     }
     public void KillAnimalBySid(int sid)
     {
-        if(GetAnimalBySid(sid) != null)
+        uiSys = luncher.GetSystem<UiSys>();
+
+        Animal animal = m_Sid2Animal.ContainsKey(sid) ? m_Sid2Animal[sid] : null;
+
+        if (GetAnimalBySid(sid) != null)
         {
             //animal去自己销毁
+            animal.OnEntityEvent -= HandleEntityEvent;
+            animal.OnDestroy();
+            m_Sid2Animal.Remove(sid);
+            m_ActiveAnimal.Remove(animal);
+            uiSys.DestroyUi(sid);
         }
         else
         {
@@ -91,6 +116,10 @@ public class AnimalSys : SystemBase
             return null;
         }
         return m_Sid2Animal[sid];
+    }
+    public string GetAnimalNameBySid(int sid)
+    {
+        return VarHelper.GetString(m_Sid2Animal[sid].m_Props[PropId.Name]);
     }
 
 }
@@ -141,34 +170,29 @@ public class AnimalSys : SystemBase
     //    return m_Sid2Animal[sid];
     //}
 
-    //public override void Init(GameLuncher gameLuncher)
-    //{
-    //    base.Init(gameLuncher);
 
-    //    gameLuncher.GetSystem<MsgSystem>().RegsignMsg(CommandID.OnUseMoney, OnUseMoney);
-    //}
 
     //void OnUseMoney()
     //{
     //    // 
     //}
 
-    //public override void Update()
-    //{
-    //    base.Update();
+//public override void Update()
+//{
+//    base.Update();
 
-    //    foreach (var obj in m_ActiveAnimal)
-    //    {
-    //        int canEnterWater = obj.GetProp(PropId.CanEnterWater);
-    //        if (canEnterWater == 1)
-    //        {
-    //            // 下水
-    //        }
-    //        else
-    //        {
-    //            continue;
-    //        }
-    //    }
-    //    // animal
-    //    // 下水
-    //}
+//    foreach (var obj in m_ActiveAnimal)
+//    {
+//        int canEnterWater = obj.GetProp(PropId.CanEnterWater);
+//        if (canEnterWater == 1)
+//        {
+//            // 下水
+//        }
+//        else
+//        {
+//            continue;
+//        }
+//    }
+//    // animal
+//    // 下水
+//}

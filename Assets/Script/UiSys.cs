@@ -15,6 +15,9 @@ public class UiSys : SystemBase
     Vector2 m_MousePosition;
     private GameObject m_PriceBroad;
     private TextMeshPro m_priceText;
+    private Animal m_preAnimal;
+    private int m_currentUiIndex;
+    private int m_preUiIndex;
 
     public void StartCreateUi()
     {
@@ -60,13 +63,9 @@ public class UiSys : SystemBase
         m_Sid2Ui.Add(ui.InstanceId, ui);
         m_ActiveUi.Add(ui);
     }
-    public Ui GetUi(int s_id)
+    public Ui GetUiByIndex(int index)
     {
-        if (!m_Sid2Ui.ContainsKey(s_id))
-        {
-            return null;
-        }
-        return m_Sid2Ui[s_id];
+        return m_ActiveUi[index];
     }
     //todo:和animal逻辑绑定，不同的动物调用不同的预制体，对表现层进行操作
     public override void Update()
@@ -80,7 +79,7 @@ public class UiSys : SystemBase
             LogPointerDiagnostics();
         }
         m_MousePosition = ScreenHelper.GetMouseWorldPos();
-        Ui currentUi = null;
+        m_currentUiIndex = -1;
         for (int i = 0; i < m_ActiveUi.Count; i++)
         {//对于所有的ui进行更新
             m_ActiveUi[i].OnUpdate();
@@ -88,26 +87,88 @@ public class UiSys : SystemBase
             if (ui.IsPointInCollider(m_MousePosition))
             {
                 //Debug.Log($"Mouse is over UI: sid={ui.InstanceId}, name={VarHelper.GetString(ui.m_Entity.GetProp(PropId.Name))}");
-                currentUi = ui;
-                break;
+                m_currentUiIndex = i;
             }
         }
-        if (currentUi != null)
+        //Debug.LogWarning("Current UI index: " + m_ActiveUi.Count);
+        if (m_currentUiIndex != -1)
+        {
+            m_preUiIndex = m_currentUiIndex;
+        }
+        ShowBroad();
+        if (Input.GetMouseButtonDown(0) && IsPointerOverBroad(m_MousePosition))
+        {
+            SellAnimal(GetSidById(m_preUiIndex));
+            return;
+        }
+    }
+    private int GetSidById(int index)
+    {
+        if (index < 0 || index >= m_ActiveUi.Count)
+        {
+            Debug.LogError($"UI 下标无效: {index}");
+            return -1;
+        }
+
+        Ui ui = m_ActiveUi[index];
+
+        if (ui == null || ui.m_Entity == null)
+        {
+            Debug.LogError($"找不到下标为 {index} 的 UI 或动物");
+            return -1;
+        }
+
+        return ui.m_Entity.InstanceId;
+    }
+    private void SellAnimal(int uiIndex)
+    {
+        if (m_Sid2Ui[uiIndex] == null) return;
+        ShoppingSys shoppingSys = luncher.GetSystem<ShoppingSys>();
+        shoppingSys.SellAnimalById(uiIndex);
+        HideAnimalPrice();
+    }
+    private void ShowBroad()
+    {
+        if (m_currentUiIndex != -1)
         {
             //todo:鼠标悬停在ui上，显示动物价格
+            Ui currentUi = GetUiByIndex(m_currentUiIndex);
             string name = VarHelper.GetString(currentUi.m_Entity.GetProp(PropId.Name));
             if (name != null)
             {
                 int price = GetAnimalSellPrice(name);
                 ShowAnimalPrice(currentUi, (int)price);
             }
-
-            //SellAnimals(currentUi);
+            if (currentUi.m_Entity is Animal animal)
+            {
+                animal.SetPaused(true);
+                m_preAnimal = currentUi.m_Entity as Animal;
+            }
+            else
+            {
+            }
         }
         else
         {
+            if (m_PriceBroad != null && IsPointerOverBroad(m_MousePosition))//如果悬停在价格面板上，同样继续显示
+            {
+                return;
+            }
             HideAnimalPrice();
+            if (m_preAnimal != null)
+            {
+                m_preAnimal.SetPaused(false);
+                m_preAnimal = null;
+            }
         }
+    }
+    private bool IsPointerOverBroad(Vector2 mousePosition)
+    {
+        if (m_PriceBroad != null && m_PriceBroad.GetComponent<Collider2D>().OverlapPoint(mousePosition))
+        {
+            return true;
+        }
+        return false;
     }
     private void LogPointerDiagnostics()
     {
@@ -195,7 +256,7 @@ public class UiSys : SystemBase
                 return;
             }
             m_PriceBroad = Object.Instantiate(pricePrefab);
-            m_priceText = pricePrefab.transform.Find("PriceText").GetComponent<TextMeshPro>();
+            m_priceText = m_PriceBroad.transform.Find("PriceText").GetComponent<TextMeshPro>();
         }
         if (m_priceText != null)
         {
@@ -214,7 +275,6 @@ public class UiSys : SystemBase
         {
             m_PriceBroad.SetActive(false);
         }
-
         //m_PriceUi = null;
     }
     private int GetAnimalSellPrice(string name)
